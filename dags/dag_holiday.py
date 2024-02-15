@@ -56,7 +56,7 @@ def dag_holiday_generator(
                 response.raise_for_status()
 
                 # Save JSON data to a file
-                logging.info(f'writing data to /tmp/holidays_{year_str}.json')
+                logging.info(f"writing data to /tmp/holidays_{year_str}.json")
 
                 with open(f"/tmp/holidays_{year_str}.json", "w") as json_file:
                     json.dump(response.json()["response"]["holidays"], json_file)
@@ -74,12 +74,13 @@ def dag_holiday_generator(
         for i, year_str in enumerate(year_list):
             with open(f"/tmp/holidays_{year_str}.json") as json_file:
                 json_data = json.load(json_file)
-            
+
             dataframe = json_normalize(json_data)
 
             if i == 0:
                 dataframe.to_csv(
-                    "/tmp/holidays.csv", index=False, mode="w", header=True
+                    "/tmp/holidays.csv", index=False, mode="w", header=True,
+                    sep=';'
                 )
             else:
                 dataframe.to_csv(
@@ -87,6 +88,7 @@ def dag_holiday_generator(
                     index=False,
                     mode="a",
                     header=False,
+                    sep=';'
                 )
 
         return "done"
@@ -130,11 +132,8 @@ def dag_holiday_generator(
         bash_command="rm -rf /tmp/holidays.csv /tmp/holidays_*.json",
     )
 
-
     write_dataframe_done = write_dataframe()
 
-    # write_dataframe()
-    # done = write_dataframe(holiday_generator)
     json_response >> branch_operator >> [write_dataframe_done, email_operator]
 
     write_dataframe_done >> create_bucket >> to_s3 >> remove_local_files
@@ -153,5 +152,5 @@ dag_holiday_generator(
     endpoint="/holidays",
     api_key="OhB6EkvGcnYIOwBW25PrUH1u9WMyA8DK",
     country="BR",
-    year=['2024', '2023'],
+    year=["2024", "2023"],
 )
