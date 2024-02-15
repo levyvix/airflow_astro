@@ -4,11 +4,7 @@ import boto3
 from airflow.decorators import dag, task
 from airflow.providers.amazon.aws.hooks.base_aws import AwsBaseHook
 from airflow.providers.amazon.aws.operators.glue import GlueJobOperator
-from airflow.providers.amazon.aws.operators.glue import GlueJobOperator
 from airflow.providers.amazon.aws.operators.glue_crawler import GlueCrawlerOperator
-from airflow.providers.amazon.aws.transfers.local_to_s3 import (
-    LocalFilesystemToS3Operator,
-)
 from airflow.providers.amazon.aws.transfers.local_to_s3 import (
     LocalFilesystemToS3Operator,
 )
@@ -39,12 +35,9 @@ def glue_operations():
         try:
             glue_client.delete_classifier(Name="calendarific_csv")
 
-            glue_client.delete_classifier(Name="calendarific_csv")
-
             glue_client.create_classifier(
                 CsvClassifier={
                     "Name": "calendarific_csv",
-                    "Delimiter": ";",
                     "Delimiter": ";",
                     "QuoteSymbol": '"',
                     "ContainsHeader": "PRESENT",
@@ -68,25 +61,12 @@ def glue_operations():
                         "date.timezone.offset",
                         "date.timezone.zoneabb",
                         "date.timezone.zoneoffset",
-                        "country.id",
-                        "country.name",
-                        "date.iso",
-                        "date.datetime.year",
-                        "date.datetime.month",
-                        "date.datetime.day",
-                        "date.datetime.minute",
-                        "date.datetime.second",
-                        "date.timezone.offset",
-                        "date.timezone.zoneabb",
-                        "date.timezone.zoneoffset",
                     ],
                 }
             )
         except glue_client.exceptions.AlreadyExistsException:
             return "already exists"
-            return "already exists"
 
-        return "created"
         return "created"
 
     glue_crawler_config = {
@@ -100,7 +80,6 @@ def glue_operations():
                 }
             ]
         },
-        "Classifiers": ["calendarific_csv"],
         "Classifiers": ["calendarific_csv"],
     }
 
