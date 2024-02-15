@@ -1,4 +1,3 @@
-.git
 .env
 .DS_Store # macOS specific ignore
 airflow_settings.yaml
@@ -9,3 +8,4 @@ airflow-webserver.pid
 webserver_config.py
 airflow.cfg
 airflow.db
+poetry.lock

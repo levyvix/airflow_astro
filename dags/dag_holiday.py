@@ -57,6 +57,7 @@ def dag_holiday_generator(
 
                 # Save JSON data to a file
                 logging.info(f"writing data to /tmp/holidays_{year_str}.json")
+                logging.info(f"writing data to /tmp/holidays_{year_str}.json")
 
                 with open(f"/tmp/holidays_{year_str}.json", "w") as json_file:
                     json.dump(response.json()["response"]["holidays"], json_file)
@@ -75,20 +76,16 @@ def dag_holiday_generator(
             with open(f"/tmp/holidays_{year_str}.json") as json_file:
                 json_data = json.load(json_file)
 
+
             dataframe = json_normalize(json_data)
 
             if i == 0:
                 dataframe.to_csv(
-                    "/tmp/holidays.csv", index=False, mode="w", header=True,
-                    sep=';'
+                    "/tmp/holidays.csv", index=False, mode="w", header=True, sep=";"
                 )
             else:
                 dataframe.to_csv(
-                    "/tmp/holidays.csv",
-                    index=False,
-                    mode="a",
-                    header=False,
-                    sep=';'
+                    "/tmp/holidays.csv", index=False, mode="a", header=False, sep=";"
                 )
 
         return "done"
@@ -153,4 +150,6 @@ dag_holiday_generator(
     api_key="OhB6EkvGcnYIOwBW25PrUH1u9WMyA8DK",
     country="BR",
     year=["2024", "2023"],
+    year=["2024", "2023"],
 )
+

@@ -4,7 +4,11 @@ import boto3
 from airflow.decorators import dag, task
 from airflow.providers.amazon.aws.hooks.base_aws import AwsBaseHook
 from airflow.providers.amazon.aws.operators.glue import GlueJobOperator
+from airflow.providers.amazon.aws.operators.glue import GlueJobOperator
 from airflow.providers.amazon.aws.operators.glue_crawler import GlueCrawlerOperator
+from airflow.providers.amazon.aws.transfers.local_to_s3 import (
+    LocalFilesystemToS3Operator,
+)
 from airflow.providers.amazon.aws.transfers.local_to_s3 import (
     LocalFilesystemToS3Operator,
 )
@@ -35,9 +39,12 @@ def glue_operations():
         try:
             glue_client.delete_classifier(Name="calendarific_csv")
 
+            glue_client.delete_classifier(Name="calendarific_csv")
+
             glue_client.create_classifier(
                 CsvClassifier={
                     "Name": "calendarific_csv",
+                    "Delimiter": ";",
                     "Delimiter": ";",
                     "QuoteSymbol": '"',
                     "ContainsHeader": "PRESENT",
@@ -61,12 +68,25 @@ def glue_operations():
                         "date.timezone.offset",
                         "date.timezone.zoneabb",
                         "date.timezone.zoneoffset",
+                        "country.id",
+                        "country.name",
+                        "date.iso",
+                        "date.datetime.year",
+                        "date.datetime.month",
+                        "date.datetime.day",
+                        "date.datetime.minute",
+                        "date.datetime.second",
+                        "date.timezone.offset",
+                        "date.timezone.zoneabb",
+                        "date.timezone.zoneoffset",
                     ],
                 }
             )
         except glue_client.exceptions.AlreadyExistsException:
             return "already exists"
+            return "already exists"
 
+        return "created"
         return "created"
 
     glue_crawler_config = {
@@ -80,6 +100,7 @@ def glue_operations():
                 }
             ]
         },
+        "Classifiers": ["calendarific_csv"],
         "Classifiers": ["calendarific_csv"],
     }
 
@@ -95,12 +116,12 @@ def glue_operations():
     #     task_id="git_pull",
     #     bash_command="cd /tmp && git clone https://github.com/levyvix/glue_scripts.git",
     # )
-    
+
     upload_script = LocalFilesystemToS3Operator(
-        task_id = 'upload_script',
-        filename='/usr/local/airflow/include/scripts/pyspark/glue_job_calendarific.py',
-        dest_key = f's3://{BUCKET_NAME}/scripts/glue_job_calendarific.py',
-        replace=True
+        task_id="upload_script",
+        filename="/usr/local/airflow/include/scripts/pyspark/glue_job_calendarific.py",
+        dest_key=f"s3://{BUCKET_NAME}/scripts/glue_job_calendarific.py",
+        replace=True,
     )
 
     submit_glue_job = GlueJobOperator(
@@ -114,10 +135,10 @@ def glue_operations():
             "NumberOfWorkers": 2,
             "WorkerType": "G.1X",
         },
-        region_name='us-east-1'
+        region_name="us-east-1",
     )
-    
-    BUCKET_SILVER = 'dataeng-clean-zone-957'
+
+    BUCKET_SILVER = "dataeng-clean-zone-957"
     config_silver = {
         "Name": "airflow-levy-crawler-silver",
         "Role": "airflow-levi-role",
@@ -128,10 +149,10 @@ def glue_operations():
                     "Path": f"s3://{BUCKET_SILVER}/holidays",
                 }
             ]
-        }
+        },
     }
-    
-    crawl_s3_silver =  GlueCrawlerOperator(
+
+    crawl_s3_silver = GlueCrawlerOperator(
         task_id="crawl_s3_silver",
         config=config_silver,
         region_name="us-east-1",
@@ -139,7 +160,13 @@ def glue_operations():
 
     create_classifier_task = create_classifier()
 
-    create_classifier_task >> crawl_s3 >> upload_script >> submit_glue_job >> crawl_s3_silver
+    (
+        create_classifier_task
+        >> crawl_s3
+        >> upload_script
+        >> submit_glue_job
+        >> crawl_s3_silver
+    )
 
 
 glue_operations()
