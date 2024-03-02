@@ -1,31 +1,23 @@
 import json
-from pendulum import datetime
 
+import pendulum
 from airflow.decorators import (
     dag,
     task,
-)  # DAG and task decorators for interfacing with the TaskFlow API
+)
+from pendulum import datetime
 
 
-# When using the DAG decorator, The "dag_id" value defaults to the name of the function
-# it is decorating if not explicitly set. In this example, the "dag_id" value would be "example_dag_basic".
 @dag(
-    # This defines how often your DAG will run, or the schedule by which your DAG runs. In this case, this DAG
-    # will run daily
     schedule="@daily",
-    # This DAG is set to run for the first time on January 1, 2023. Best practice is to use a static
-    # start_date. Subsequent DAG runs are instantiated based on the schedule
-    start_date=datetime(2023, 1, 1),
-    # When catchup=False, your DAG will only run the latest run that would have been scheduled. In this case, this means
-    # that tasks will not be run between January 1, 2023 and 30 mins ago. When turned on, this DAG's first
-    # run will be for the next 30 mins, per the its schedule
     catchup=False,
+    start_date=datetime(2023, 1, 1),
     default_args={
-        "retries": 2,  # If a task fails, it will retry 2 times.
+        "retries": 2,
     },
     tags=["example"],
-)  # If set, this tag is shown in the DAG view of the Airflow UI
-def example_dag_basic():
+)
+def example_dag_basic_levy():
     """
     ### Basic ETL Dag
     This is a simple ETL data pipeline example that demonstrates the use of
@@ -61,7 +53,10 @@ def example_dag_basic():
         for value in order_data_dict.values():
             total_order_value += value
 
-        return {"total_order_value": total_order_value}
+        return {
+            "total_order_value": total_order_value,
+            "total_order_name": "levy marques Nunes",
+        }
 
     @task()
     def load(total_order_value: float):
@@ -72,10 +67,18 @@ def example_dag_basic():
         """
 
         print(f"Total order value is: {total_order_value:.2f}")
+        return "loaded"
+
+    @task()
+    def print_date(total_order_date):
+        print(f"the today date is: {pendulum.today()}")
+        print(f"total order_name: {total_order_date}")
 
     order_data = extract()
     order_summary = transform(order_data)
-    load(order_summary["total_order_value"])
+    load(order_summary["total_order_value"]) >> print_date(
+        total_order_date=order_summary["total_order_name"]
+    )
 
 
-example_dag_basic()
+example_dag_basic_levy()
