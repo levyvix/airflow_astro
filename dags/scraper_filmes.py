@@ -20,9 +20,10 @@ def scrape_comandola():
 	)
 
 
-	# run_transformation = TriggerDagRunOperator(
-	# 	trigger_dag_id='scraper_transform', 
-	# )
-	enter_dir
+	run_transformation = TriggerDagRunOperator(
+		task_id = 'run_transformation',
+		trigger_dag_id='json_to_postgres', 
+	)
+	enter_dir >> run_transformation
 
 scrape_comandola()

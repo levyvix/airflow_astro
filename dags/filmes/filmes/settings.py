@@ -12,7 +12,7 @@ BOT_NAME = "filmes"
 SPIDER_MODULES = ["filmes.spiders"]
 NEWSPIDER_MODULE = "filmes.spiders"
 
-CLOSESPIDER_ITEMCOUNT = 20
+CLOSESPIDER_ITEMCOUNT = 50
 FEED_EXPORT_ENCODING = "utf-8"
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = 'filmes (+http://www.yourdomain.com)'

@@ -1,9 +1,10 @@
-import logging
-from pprint import pprint
-import re
-import scrapy
-import dateparser
 import dataclasses
+import logging
+import re
+from pprint import pprint
+
+import dateparser
+import scrapy
 
 
 @dataclasses.dataclass
@@ -41,10 +42,13 @@ class FilmesSpider(scrapy.Spider):
             yield scrapy.Request(url=url, callback=self.parse_detail, meta={"url": url})
 
         # pega a próxima página
-        next_page = response.xpath(
-            "//html/body/div[1]/div[2]/div[1]/div[2]/div/a[7]/@href"
-        ).extract_first()
-
+        # .nextpostslink
+        # next_page = response.xpath(
+        #     "//html/body/div[1]/div[2]/div[1]/div[2]/div/a[7]/@href"
+        # ).extract_first()
+        
+        next_page = response.css("a.nextpostslink::attr(href)").extract_first()
+        
         if next_page is not None:
             # yield scrapy.Request(response.urljoin(next_page), callback = self.parse)
             yield response.follow(next_page, callback=self.parse)
