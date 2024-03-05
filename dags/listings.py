@@ -10,7 +10,7 @@ from airflow.providers.postgres.operators.postgres import PostgresOperator
     schedule="@hourly",
     catchup=False,
     template_searchpath="/tmp",
-    dafault_args={"retries": 2},
+    default_args={"retries": 2},
     tags=["listings", ""],
 )
 def listings():

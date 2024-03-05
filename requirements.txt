@@ -2,3 +2,5 @@
 pandas==2.1.0
 astro-sdk-python[amazon,google,snowflake,postgres]
 duckdb
+Scrapy
+dateparser
