@@ -11,7 +11,7 @@ from airflow.providers.postgres.operators.postgres import PostgresOperator
     catchup=False,
     template_searchpath="/tmp",
     default_args={"retries": 2},
-    tags=["listings", ""],
+    tags=["listings", "book"],
 )
 def listings():
     get_data = BashOperator(

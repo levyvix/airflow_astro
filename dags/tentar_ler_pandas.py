@@ -14,9 +14,16 @@ def top_five_animations(input_table: DataFrame):
     return (
         input_table.loc[lambda d: d["Genre1"] == "Animation"]
         .sort_values("Rating", ascending=False)
-        .loc[:, ["Title", "Rating", ]]
+        .loc[
+            :,
+            [
+                "Title",
+                "Rating",
+            ],
+        ]
         .head(5)
     )
+
 
 @dag(catchup=False, start_date=datetime(2021, 1, 1), schedule=None)
 def tentar_ler_pandas():
@@ -34,7 +41,6 @@ def tentar_ler_pandas():
             temp=False,
         ),
     )
-
 
     aql.cleanup()
 

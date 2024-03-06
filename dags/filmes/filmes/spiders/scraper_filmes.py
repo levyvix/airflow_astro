@@ -46,9 +46,9 @@ class FilmesSpider(scrapy.Spider):
         # next_page = response.xpath(
         #     "//html/body/div[1]/div[2]/div[1]/div[2]/div/a[7]/@href"
         # ).extract_first()
-        
+
         next_page = response.css("a.nextpostslink::attr(href)").extract_first()
-        
+
         if next_page is not None:
             # yield scrapy.Request(response.urljoin(next_page), callback = self.parse)
             yield response.follow(next_page, callback=self.parse)
@@ -106,7 +106,6 @@ class FilmesSpider(scrapy.Spider):
             tamanho = infos[9]
             qualidade = infos[11]
 
-
         link = response.meta["url"]
 
         ano = response.xpath(
@@ -143,7 +142,6 @@ class FilmesSpider(scrapy.Spider):
         tamanho = GB_to_MB(tamanho)
         duracao = split_duracao(duracao.replace(":", "").strip())
         qualidade = float(qualidade.replace(":", "").strip().replace(",", "."))
-
 
         if isinstance(imdb, str) and imdb is not None:
             if "–" not in imdb:

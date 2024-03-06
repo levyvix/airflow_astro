@@ -18,8 +18,7 @@ from astro.sql.table import Table
 @aql.dataframe()
 def top_five_animations(input_table: pd.DataFrame):
     return (
-        input_table
-        .loc[lambda d: d["Genre1"] == "Animation"]
+        input_table.loc[lambda d: d["Genre1"] == "Animation"]
         .sort_values("Rating", ascending=False)
         .loc[:, ["Title", "Rating"]]
         .head(5)

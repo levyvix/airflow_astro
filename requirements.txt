@@ -4,3 +4,4 @@ astro-sdk-python[amazon,google,snowflake,postgres]
 duckdb
 Scrapy
 dateparser
+yagmail
