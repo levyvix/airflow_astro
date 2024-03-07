@@ -10,7 +10,7 @@ cur_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "filmes"))
 
 @dag(
     start_date=datetime(2024, 1, 1),
-    schedule="0 7 * * *",
+    schedule="0 10 * * *",
     catchup=False,
     tags=["comandola", "scraper"],
 )
