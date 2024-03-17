@@ -15,7 +15,6 @@ cur_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "filmes"))
     tags=["comandola", "scraper"],
 )
 def scrape_comandola():
-
     enter_dir = BashOperator(
         task_id="enter", bash_command=f"cd {cur_dir} && python run_scraper.py"
     )

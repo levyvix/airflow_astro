@@ -40,14 +40,10 @@ class FilmesSpider(scrapy.Spider):
 
             # manda para o parse_detail
             yield scrapy.Request(url=url, callback=self.parse_detail, meta={"url": url})
-
-        # pega a próxima página
-        # .nextpostslink
-        # next_page = response.xpath(
-        #     "//html/body/div[1]/div[2]/div[1]/div[2]/div/a[7]/@href"
-        # ).extract_first()
-
-        next_page = response.css("a.nextpostslink::attr(href)").extract_first()
+        try:
+            next_page = response.css("a.nextpostslink::attr(href)").extract_first()
+        except:
+            next_page = None
 
         if next_page is not None:
             # yield scrapy.Request(response.urljoin(next_page), callback = self.parse)
