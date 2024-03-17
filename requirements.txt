@@ -5,3 +5,4 @@ duckdb
 Scrapy
 dateparser
 yagmail
+apache-airflow-providers-airbyte[http]
