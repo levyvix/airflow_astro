@@ -141,7 +141,7 @@ def fetch_news_data():
                 <h3> By: {row['source_name'].title()}</h3>
                 <p>{row['description']}</p>
                 <img src="{row['urlToImage']}" alt="{row['title']}">
-                <p>Published at: {row['publishedAt']}</p>
+                <p>Published at: {row['publishedAt'].split('T')[0]}</p>
                 <a href="{row['url']}">Read more</a>
             </div>
             """

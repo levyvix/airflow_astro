@@ -12,14 +12,12 @@ from sqlalchemy import create_engine, text
     tags=["comandola", "scraper"],
 )
 def json_to_postgres():
-
     @task
     def get_json():
         return pd.read_json("/tmp/filmes.json")
 
     @task(multiple_outputs=True)
     def to_postgres(df: pd.DataFrame, **context):
-
         engine = create_engine(
             "postgresql://postgres:l12345@192.168.18.87/home?client_encoding=utf8"
         )
@@ -29,7 +27,6 @@ def json_to_postgres():
         )
 
         try:
-
             existing = pd.read_sql_query("select * from scraper.filmes")
             union = pd.concat([df, existing])
 
@@ -60,7 +57,7 @@ def json_to_postgres():
 
     @task()
     def send_mail(message, subject):
-        send_email(message, subject)
+        send_email(message, "Daily dose of movies from " + subject)
 
     message_subject = to_postgres(json)
 
