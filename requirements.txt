@@ -6,3 +6,5 @@ Scrapy
 dateparser
 yagmail
 apache-airflow-providers-airbyte[http]
+astronomer-cosmos
+dbt-postgres
