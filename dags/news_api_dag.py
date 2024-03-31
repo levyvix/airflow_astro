@@ -1,14 +1,11 @@
-from airflow import DAG
-from airflow.operators.python_operator import PythonOperator
-from airflow.decorators import dag, task
-from airflow.providers.postgres.operators.postgres import PostgresOperator
-from airflow.utils.dates import days_ago
-from sqlalchemy import create_engine
-from filmes.send_email.send_email import send_email
 import pandas as pd
 import requests as rq
+from airflow.decorators import dag, task
 from airflow.operators.python import get_current_context
+from airflow.providers.postgres.operators.postgres import PostgresOperator
+from filmes.send_email.send_email import send_email
 from pendulum import datetime
+from sqlalchemy import create_engine
 
 # Define the function to fetch and update news data
 
