@@ -87,7 +87,10 @@ def fetch_news_data():
         ]
 
         # Update database
-        merged_data.to_sql("news", engine, if_exists="replace", index=False)
+
+        engine.execute("TRUNCATE TABLE news")
+
+        merged_data.to_sql("news", engine, if_exists="append", index=False)
 
         print("Webhook sent with new information:", new_data.shape[0], "new articles.")
 
