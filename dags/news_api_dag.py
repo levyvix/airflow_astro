@@ -5,6 +5,7 @@ from airflow.operators.python import get_current_context
 from airflow.providers.postgres.operators.postgres import PostgresOperator
 from filmes.send_email.send_email import send_email
 from pendulum import datetime
+import pendulum
 from sqlalchemy import create_engine
 
 # Define the function to fetch and update news data
@@ -150,6 +151,10 @@ def fetch_news_data():
         </body>
         </html>
         """
+
+        saopaulo = pendulum.timezone("America/Sao_Paulo")
+
+        context["execution_date"] = context["execution_date"].in_timezone(saopaulo)
 
         send_email(
             html_content,
