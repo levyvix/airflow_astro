@@ -55,7 +55,6 @@ def dag_holiday_generator(
                 )
                 response.raise_for_status()
 
-                # Save JSON data to a file
                 logging.info(f"writing data to /tmp/holidays_{year_str}.json")
 
                 with open(f"/tmp/holidays_{year_str}.json", "w") as json_file:

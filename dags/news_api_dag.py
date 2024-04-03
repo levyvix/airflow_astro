@@ -70,27 +70,30 @@ def fetch_news_data():
 
         print(new_data)
 
-        merged_data = pd.concat([existing_data, new_data])
+        merged_data = (
+            pd.concat([existing_data, new_data])
+            .drop_duplicates()
+            .loc[
+                :,
+                [
+                    "author",
+                    "title",
+                    "description",
+                    "url",
+                    "urlToImage",
+                    "publishedAt",
+                    "content",
+                    "source_id",
+                    "source_name",
+                ],
+            ]
+        )
 
-        merged_data = merged_data.drop_duplicates().loc[
-            :,
-            [
-                "author",
-                "title",
-                "description",
-                "url",
-                "urlToImage",
-                "publishedAt",
-                "content",
-                "source_id",
-                "source_name",
-            ],
-        ]
-
-        # Update database
-
+        # update database
+        # truncate table, because other tables depend on it, so I can't drop it.
         engine.execute("TRUNCATE TABLE news")
 
+        # append because the table already exists and can't be dropped
         merged_data.to_sql("news", engine, if_exists="append", index=False)
 
         print("Webhook sent with new information:", new_data.shape[0], "new articles.")
