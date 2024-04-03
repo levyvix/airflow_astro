@@ -19,7 +19,7 @@ profile_config = ProfileConfig(
     profile_name="default",
     target_name="dev",
     profile_mapping=PostgresUserPasswordProfileMapping(
-        conn_id="postgres_5431",
+        conn_id="postgres_render",
         profile_args={"schema": "public"},
     ),
 )

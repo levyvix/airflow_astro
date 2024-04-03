@@ -32,7 +32,7 @@ default_args = {
 def fetch_news_data():
     create_postgres_table = PostgresOperator(
         task_id="create_postgres_table",
-        postgres_conn_id="postgres_5431",
+        postgres_conn_id="postgres_render",
         sql="""
             CREATE TABLE IF NOT EXISTS news (
                 author TEXT,
@@ -51,7 +51,7 @@ def fetch_news_data():
     @task()
     def fetch_and_update_news():
         engine = create_engine(
-            "postgresql://postgres:l12345@192.168.18.87/home?client_encoding=utf8"
+            "postgresql://ada:PR1gvstOECPAb8Yqat1OptlTPm2orbDC@dpg-co6a0ka0si5c73cck8d0-a.oregon-postgres.render.com/database_vx82"
         )
 
         existing_data = pd.read_sql("SELECT * FROM news", engine)
@@ -87,6 +87,7 @@ def fetch_news_data():
                     "source_name",
                 ],
             ]
+            .rename(columns={"urlToImage": "urltoimage", "publishedAt": "publishedat"})
         )
 
         # update database
