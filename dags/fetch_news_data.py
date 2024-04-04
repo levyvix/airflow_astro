@@ -8,6 +8,9 @@ from pendulum import datetime
 import pendulum
 from sqlalchemy import create_engine
 
+
+pd.set_option("display.max_colwidth", None)
+pd.set_option("display.max_columns", None)
 # Define the function to fetch and update news data
 
 
@@ -88,7 +91,16 @@ def fetch_news_data():
                 ],
             ]
             .rename(columns={"urlToImage": "urltoimage", "publishedAt": "publishedat"})
+            .assign(
+                publishedat=lambda d: pd.to_datetime(
+                    d["publishedat"].str.split("T").str[0],
+                    format="%Y-%m-%d",
+                    errors="coerce",
+                )
+            )
         )
+
+        print(merged_data)
 
         # update database
         # truncate table, because other tables depend on it, so I can't drop it.
