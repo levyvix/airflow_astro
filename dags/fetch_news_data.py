@@ -61,17 +61,35 @@ def fetch_news_data():
 
         params = {
             "q": "Apple",
-            "sortBy": "popularity",
             "apiKey": "45a541a896864ea0becf962b10f5a79e",
+            "sortBy": "popularity",
         }
+
         response = rq.get("https://newsapi.org/v2/top-headlines", params=params)
         new_data = pd.json_normalize(response.json()["articles"], sep="_")
+
+        new_data = new_data.loc[
+            :,
+            [
+                "author",
+                "title",
+                "description",
+                "url",
+                "urlToImage",
+                "publishedAt",
+                "content",
+                "source_id",
+                "source_name",
+            ],
+        ].rename(columns={"urlToImage": "urltoimage", "publishedAt": "publishedat"})
+
+        print(new_data.head()["publishedat"])
 
         new_data = new_data[~new_data["url"].isin(existing_data["url"])].loc[
             lambda df: df["url"] != "https://removed.com"
         ]
 
-        print(new_data)
+        print(new_data.head()["publishedat"])
 
         merged_data = (
             pd.concat([existing_data, new_data])
@@ -83,24 +101,16 @@ def fetch_news_data():
                     "title",
                     "description",
                     "url",
-                    "urlToImage",
-                    "publishedAt",
+                    "urltoimage",
+                    "publishedat",
                     "content",
                     "source_id",
                     "source_name",
                 ],
             ]
-            .rename(columns={"urlToImage": "urltoimage", "publishedAt": "publishedat"})
-            .assign(
-                publishedat=lambda d: pd.to_datetime(
-                    d["publishedat"].str.split("T").str[0],
-                    format="%Y-%m-%d",
-                    errors="coerce",
-                )
-            )
         )
 
-        print(merged_data)
+        print(merged_data.head()["publishedat"])
 
         # update database
         # truncate table, because other tables depend on it, so I can't drop it.
@@ -157,8 +167,8 @@ def fetch_news_data():
                 <h2>{row['title']}</h2>
                 <h3> By: {row['source_name'].title()}</h3>
                 <p>{row['description']}</p>
-                <img src="{row['urlToImage']}" alt="{row['title']}">
-                <p>Published at: {row['publishedAt'].split('T')[0]}</p>
+                <img src="{row['urltoimage']}" alt="{row['title']}">
+                <p>Published at: {row['publishedat'].split('T')[0]}</p>
                 <a href="{row['url']}">Read more</a>
             </div>
             """
